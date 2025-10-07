@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import Fastify, { FastifyInstance } from 'fastify';
+import cors from '@fastify/cors';
 import { connectDatabase, disconnectDatabase } from './utils/database';
 import { authRoutes } from './routes/auth';
 import { scheduleRoutes } from './routes/schedule';
@@ -14,6 +15,11 @@ const fastify: FastifyInstance = Fastify({
 async function start() {
   try {
     await connectDatabase();
+
+    await fastify.register(cors, {
+      origin: 'http://localhost:5173',
+      credentials: true
+    });
 
     await fastify.register(authRoutes, { prefix: '/api/auth' });
     await fastify.register(scheduleRoutes, { prefix: '/api' });
